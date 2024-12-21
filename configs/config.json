@@ -1,0 +1,17 @@
+{
+	"main_bot_token": "8190474910:AAEGV8SiUDbPod4tx3wk0OWjoQ1lH4lLfWA",
+	"additional_bots": {
+		"bot1": "7571953474:AAGGQSisbJMdZLQDj7fqB6ysw-M5KhOt-iI",
+		"bot2": "7753384478:AAHduyU8gZSXz6h6rF7uTvkWGdFpLdmQ-Lw",
+		"bot3": "7814721076:AAFkZn0x8khD9KygFKhY1CPwLVCTIXvk1u4",
+		"bot4": "7805131375:AAFnul9tOaRte_6eH9AtoxCe73oHvCnqnWY"
+	},
+	"additional_usernames": {
+		"bot1": "gmscreener1_bot",
+		"bot2": "gmscreener2_bot",
+		"bot3": "gmscreener3_bot",
+		"bot4": "gmscreener4_bot"
+	},
+	"binance_api_key": "2fUIcuxFOnwTWnvqIBQXL9HLgYSxyvsLe0t21Ja8QtzeYO5OLsaboxto5EygiLmc",
+	"binance_api_secret": "2mDpXulwszdkelQD6b6VfUQTULaS7rNOtCQUdFpDug2uU1x82logP7pKGfSBKai6"
+}
