@@ -1,12 +1,12 @@
 {
-  "2051267822": {
+  "123": {
     "change_threshold": 5,
     "time_frame": "15m",
     "target_bot": "bot3",
     "monitor_oi": true,
     "oi_threshold": 2.5
   },
-  "788650004": {
+  "124": {
     "change_threshold": 2,
     "time_frame": "1m",
     "target_bot": "bot2",
