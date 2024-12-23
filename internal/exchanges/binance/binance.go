@@ -1,4 +1,3 @@
-// internal/exchanges/binance/binance.go
 package binance
 
 import (
@@ -103,7 +102,7 @@ func InitializeOI(client *futures.Client, symbols []string) map[string]float64 {
 			mu.Lock()
 			results[sym] = oi
 			mu.Unlock()
-			log.Printf("[DEBUG] Initialized OI for %s: %.2f", sym, oi)
+
 		}(symbol)
 	}
 
