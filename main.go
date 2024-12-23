@@ -1,4 +1,3 @@
-// main.go
 package main
 
 import (
@@ -9,9 +8,12 @@ import (
 	"os/signal"
 	"syscall"
 
-	"1233/internal/bots"
-	"1233/internal/exchanges/binance"
-	"1233/persistence"
+	"1333/internal/bots"
+	"1333/internal/exchanges/binance"
+	"1333/persistence"
+
+	"github.com/jackc/pgtype"
+	"github.com/jackc/pgx/v5/pgxpool"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
@@ -25,6 +27,9 @@ type Config struct {
 }
 
 func main() {
+	connectToDB()
+	defer dbPool.Close()
+
 	cfg, err := loadConfig("configs/config.json")
 	if err != nil {
 		log.Fatal(err)
@@ -92,4 +97,79 @@ func loadConfig(path string) (*Config, error) {
 		return nil, err
 	}
 	return &c, nil
+}
+
+func addUserCommand(userID int64, args []string) string {
+
+	timeFrame := args[0]
+	targetBot := args[1]
+	preferredExchanges := args[2:]
+	oiThreshold := 5.0
+	monitorOI := true
+	mode := "intraday"
+	changeThreshold := 1.0
+
+	err := insertUserData(userID, timeFrame, targetBot, preferredExchanges, float32(oiThreshold), monitorOI, mode, float32(changeThreshold))
+	if err != nil {
+		return "Ошибка сохранения данных: " + err.Error()
+	}
+	return "Ваши данные успешно сохранены!"
+}
+
+var dbPool *pgxpool.Pool
+
+func connectToDB() {
+	dsn := "postgres://postgrese:221224@localhost:5432/gms_bot_db"
+	var err error
+	dbPool, err = pgxpool.New(context.Background(), dsn)
+	if err != nil {
+		log.Fatalf("Ошибка подключения к базе данных: %v\n", err)
+	}
+	log.Println("Connected to the database!")
+}
+
+func insertUserData(userID int64, timeFrame, targetBot string, preferredExchanges []string, oiThreshold float32, monitorOI bool, mode string, changeThreshold float32) error {
+	exchangesArray := &pgtype.TextArray{}
+	if err := exchangesArray.Set(preferredExchanges); err != nil {
+		return err
+	}
+
+	query := `INSERT INTO your_table_name
+(user_id, time_frame, target_bot, preferred_exchanges, oi_threshold, monitor_oi, mode, change_threshold)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
+
+	_, err := dbPool.Exec(context.Background(), query, userID, timeFrame, targetBot, exchangesArray, oiThreshold, monitorOI, mode, changeThreshold)
+	return err
+}
+
+func getUserData(userID int64) (map[string]interface{}, error) {
+	query := `
+SELECT user_id, time_frame, target_bot, preferred_exchanges, oi_threshold, monitor_oi, mode, change_threshold
+FROM your_table_name WHERE user_id = $1`
+
+	row := dbPool.QueryRow(context.Background(), query, userID)
+
+	var timeFrame, targetBot, mode string
+	var preferredExchanges []string
+	var oiThreshold, changeThreshold float32
+	var monitorOI bool
+
+	err := row.Scan(&userID, &timeFrame, &targetBot, &preferredExchanges,
+		&oiThreshold, &monitorOI, &mode, &changeThreshold)
+
+	if err != nil {
+		return nil, err
+	}
+
+	result := map[string]interface{}{
+		"user_id":             userID,
+		"time_frame":          timeFrame,
+		"target_bot":          targetBot,
+		"preferred_exchanges": preferredExchanges,
+		"oi_threshold":        oiThreshold,
+		"monitor_oi":          monitorOI,
+		"mode":                mode,
+		"change_threshold":    changeThreshold,
+	}
+	return result, nil
 }
