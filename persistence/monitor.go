@@ -1,4 +1,3 @@
-// persistence/monitor.go
 package persistence
 
 import (
@@ -9,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"1233/internal/bots"
-	"1233/internal/exchanges/binance"
+	"1333/internal/bots"
+	"1333/internal/exchanges/binance"
 
 	"github.com/adshao/go-binance/v2/futures"
 )
@@ -75,7 +74,7 @@ func StartMonitoring(ctx context.Context, userID int64, s bots.UserSettings, sym
 						OI:        currentOI,
 					},
 				},
-				LastAlertTime: time.Time{}, // Инициализируем нулевым значением
+				LastAlertTime: time.Time{},
 			}
 			log.Printf("[User %d] Инициализировано начальное OI для %s: %.2f", userID, sym, currentOI)
 		}
@@ -103,8 +102,8 @@ func StartMonitoring(ctx context.Context, userID int64, s bots.UserSettings, sym
 						if cp > 0 {
 							d = "🟩 Pump"
 						}
-						msg := fmt.Sprintf("%s: %s\nИзменение цены: %.2f%%\nТекущая цена: %.4f USDT", d, sym, cp, currClose)
-						log.Printf("[User %d] Срабатывание по цене для %s: %.2f%%", userID, sym, cp)
+						msg := fmt.Sprintf("%s: `%s`\npriceChange: %.2f%%\ncurrentlyPrice: %.4f USDT", d, sym, cp, currClose)
+						log.Printf("[User %d] priceAlert для %s: %.2f%%", userID, sym, cp)
 						sendFunc(userID, msg)
 					}
 				}
@@ -165,7 +164,7 @@ func StartMonitoring(ctx context.Context, userID int64, s bots.UserSettings, sym
 
 					var oi15m, oi30m float64
 					for _, rec := range sTracking.Records {
-						// Используем более гибкий поиск, допускающий небольшое отклонение во времени
+				
 						if rec.Timestamp.Before(now.Add(-15*time.Minute)) && rec.Timestamp.After(now.Add(-16*time.Minute)) {
 							oi15m = rec.OI
 						}
