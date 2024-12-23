@@ -1,4 +1,3 @@
-// internal/bots/bot_manager.go
 package bots
 
 import (
@@ -44,7 +43,7 @@ func (m *BotManager) SendToBot(botName string, chatID int64, text string) {
 
 	msg := tgbotapi.NewMessage(chatID, text)
 	msg.ParseMode = "Markdown"
-	_, err := b.BotAPI.Send(msg) // Мы игнорируем первый возвращаемый объект tgbotapi.Message
+	_, err := b.BotAPI.Send(msg)
 	if err != nil {
 		log.Printf("Ошибка при отправке сообщения через бота %s: %v", botName, err)
 	} else {
