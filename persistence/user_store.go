@@ -1,4 +1,3 @@
-// persistence/user_store.go
 package persistence
 
 import (
@@ -6,7 +5,7 @@ import (
 	"os"
 	"sync"
 
-	"1233/internal/bots"
+	"1333/internal/bots"
 )
 
 type UserStore struct {
@@ -51,7 +50,7 @@ func (us *UserStore) Save() error {
 	defer file.Close()
 
 	encoder := json.NewEncoder(file)
-	encoder.SetIndent("", "  ")
+	encoder.SetIndent("", " ")
 	return encoder.Encode(us.Users)
 }
 
